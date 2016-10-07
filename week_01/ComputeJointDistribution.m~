@@ -1,0 +1,63 @@
+%ComputeJointDistribution Computes the joint distribution defined by a set
+% of given factors
+%
+%   Joint = ComputeJointDistribution(F) computes the joint distribution
+%   defined by a set of given factors
+%
+%   Joint is a factor that encapsulates the joint distribution given by F
+%   F is a vector of factors (struct array) containing the factors 
+%     defining the distribution
+%
+
+function Joint = ComputeJointDistribution(F)
+
+  % Check for empty factor list
+  if (numel(F) == 0)
+      warning('Error: empty factor list');
+      Joint = struct('var', [], 'card', [], 'val', []);      
+      return;
+  end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% YOUR CODE HERE:
+% Compute the joint distribution defined by F
+% You may assume that you are given legal CPDs so no input checking is required.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ 
+%%Joint = struct('var', [], 'card', [], 'val', []); % Returns empty factor. Change this.
+
+
+% F1 = struct('var', [1], 'card', [2], 'val', (30:31));
+% F4 = struct('var', [4], 'card', [2], 'val', (20:21));
+% F3 = struct('var', [3, 1, 4], 'card', [2, 2, 2], 'val', (10:17));
+
+% F = [F3 F1 F4];
+
+
+Joint = struct('var', [], 'card', [], 'val', []);
+
+computed = [];
+while (length(F)>0)
+  progress = 0;  % make sure we make progress in each go-round
+  for x=1 : length(F)
+	  num_vars = length(F(x).var);
+          conditioned_on = F(x).var(2:num_vars);
+
+          % are all the conditioned variables computed?  (is the set of conditioned variables inside the computed set?)
+	    if ((length(conditioned_on)==0) || (and(ismember(conditioned_on, computed))))
+	      Joint = FactorProduct(Joint, F(x));
+              computed = [computed, F(x).var(1)];
+F(x) = [];
+              progress = 1;
+            end
+  end
+	    if (progress = 0)
+	      printf("no progress!\n");
+            end
+	  
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+end
+
