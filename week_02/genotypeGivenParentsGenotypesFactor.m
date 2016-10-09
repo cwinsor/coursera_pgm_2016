@@ -25,7 +25,6 @@ function genotypeFactor = genotypeGivenParentsGenotypesFactor(numAlleles, genoty
 % The number of genotypes is (number of alleles choose 2) + number of 
 % alleles -- need to add number of alleles at the end to account for homozygotes
 
-genotypeFactor = struct('var', [], 'card', [], 'val', []);
 
 % Each allele has an ID.  Each genotype also has an ID.  We need allele and
 % genotype IDs so that we know what genotype and alleles correspond to each
@@ -38,7 +37,6 @@ genotypeFactor = struct('var', [], 'card', [], 'val', []);
 % using generateAlleleGenotypeMappers(numAlleles). (A genotype consists of 
 % 2 alleles.)
 
-[allelesToGenotypes, genotypesToAlleles] = generateAlleleGenotypeMappers(numAlleles);
 
 % One or both of these matrices might be useful.
 %
@@ -56,10 +54,40 @@ genotypeFactor = struct('var', [], 'card', [], 'val', []);
 %INSERT YOUR CODE HERE
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
 
+%% test
+%  numAlleles = 3;
+%  genotypeVarChild = 7;
+%  genotypeVarParentOne = 4;
+%  genotypeVarParentTwo = 5;
+
+
+
+genotypeFactor = struct('var', [], 'card', [], 'val', []);
+
+[allelesToGenotypes, genotypesToAlleles] = generateAlleleGenotypeMappers(numAlleles);
+
 % Fill in genotypeFactor.var.  This should be a 1-D row vector.
 % Fill in genotypeFactor.card.  This should be a 1-D row vector.
+[numGenotypes foo] = size(genotypesToAlleles);
+genotypeFactor.var = [genotypeVarChild genotypeVarParentOne genotypeVarParentTwo];
+genotypeFactor.card = [numGenotypes numGenotypes numGenotypes];
 
 genotypeFactor.val = zeros(1, prod(genotypeFactor.card));
 % Replace the zeros in genotypeFactor.val with the correct values.
+
+for (parent2Geno = 1 : numGenotypes)
+  parent2Alleles = genotypesToAlleles(parent2Geno,:);
+  for (parent1Geno = 1 : numGenotypes)
+    parent1Alleles = genotypesToAlleles(parent1Geno,:);
+    for (p1Alle = parent1Alleles)
+      for (p2Alle = parent2Alleles)
+	childGeno = allelesToGenotypes( p1Alle, p2Alle);
+	val =  GetValueOfAssignment(genotypeFactor, [childGeno, parent1Geno, parent2Geno]);
+	val = val + .25;
+	genotypeFactor = SetValueOfAssignment(genotypeFactor, [childGeno, parent1Geno, parent2Geno], val);
+      end
+    end
+  end
+end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

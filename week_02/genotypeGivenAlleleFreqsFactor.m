@@ -55,7 +55,7 @@ function genotypeFactor = genotypeGivenAlleleFreqsFactor(alleleFreqs, genotypeVa
 %% test
 % alleleFreqs = [1 2 5 10 20];
 % genotypeVar = 7;
-
+% f1 = genotypeGivenAlleleFreqsFactor(alleleFreqs, genotypeVar)
 % expect
 % .var  [7]
 % .card [15]
