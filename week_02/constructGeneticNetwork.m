@@ -48,16 +48,13 @@ function factorList = constructGeneticNetwork(pedigree, alleleFreqs, alphaList)
 %   factorList: Struct array of factors for the genetic network (In each
 %   factor, .var, .card, and .val are all row 1-D vectors.)
 
-numPeople = length(pedigree.names);
+
 
 % Initialize factors
 % The number of factors is twice the number of people because there is a 
 % factor for each person's genotype and a separate factor for each person's 
 % phenotype.  Note that the order of the factors in the list does not
 % matter.
-factorList(2*numPeople) = struct('var', [], 'card', [], 'val', []);
-
-numAlleles = length(alleleFreqs); % Number of alleles
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %INSERT YOUR CODE HERE
@@ -65,5 +62,66 @@ numAlleles = length(alleleFreqs); % Number of alleles
 % 1 - numPeople: genotype variables
 % numPeople+1 - 2*numPeople: phenotype variables
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+
+
+% moved from above... to here
+numPeople = length(pedigree.names);
+factorList(2*numPeople) = struct('var', [], 'card', [], 'val', []);
+numAlleles = length(alleleFreqs); % Number of alleles
+
+numFactors = numPeople;
+
+factorsToDo = (1:length(pedigree.names));
+factorsDone = [0];
+
+while (length(factorsToDo) > 0)
+  doneThisRound = [];
+  forwardProgress = 0;
+  for (ftdNum = 1:length(factorsToDo))
+    fNum = factorsToDo(ftdNum);
+  
+    dependencySet = pedigree.parents(fNum,:);
+    % if all the parents have been processed ...
+    if (length(setdiff(dependencySet,factorsDone)) == 0)
+
+      % bookkeeping - code it here rather than lower down in code
+      doneThisRound = [doneThisRound ftdNum];
+      forwardProgress = 1;
+
+      % common numbering
+      genotypeVar = fNum;
+      phenotypeVar = numFactors + fNum;
+      
+      %%%%%%%%%%%% genotype factor %%%%%%%%%%%
+
+
+      % ancestral nodes (no parents)
+      if (isequaln(dependencySet, [0 0]))
+	 
+	factorList(genotypeVar) = genotypeGivenAlleleFreqsFactor(alleleFreqs, genotypeVar);
+	
+      % regular nodes (with parents)
+      else
+
+	factorList(genotypeVar) = genotypeGivenParentsGenotypesFactor(numAlleles, genotypeVar, pedigree.parents(fNum,1), pedigree.parents(fNum,2));
+	
+      end
+      
+      %%%%%%%%%%%% phenotype factor %%%%%%%%%%%
+      
+      factorList(phenotypeVar) = phenotypeGivenGenotypeFactor(alphaList, genotypeVar, phenotypeVar);
+      
+    end
+  end
+  factorsDone = [factorsDone factorsToDo(doneThisRound)];
+  factorsToDo(doneThisRound) = [];
+  
+  if (forwardProgress == 0) begin
+    printf("ERROR - not making forward progress\n");
+  end
+  
+end
+  
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
