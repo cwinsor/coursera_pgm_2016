@@ -24,8 +24,6 @@ function genotypeFactor = genotypeGivenAlleleFreqsFactor(alleleFreqs, genotypeVa
 % alleles -- need to add number of alleles at the end to account for 
 % homozygotes
 
-genotypeFactor = struct('var', [], 'card', [], 'val', []);
-numAlleles = length(alleleFreqs);
 
 % Each allele has an ID that is the index of its allele frequency in the 
 % allele frequency list.  Each genotype also has an ID.  We need allele and
@@ -37,8 +35,6 @@ numAlleles = length(alleleFreqs);
 % IDs and from genotype IDs to a pair of allele IDs below; we compute this 
 % mapping using generateAlleleGenotypeMappers(numAlleles). (A genotype 
 % consists of 2 alleles.)
-
-[allelesToGenotypes, genotypesToAlleles] = generateAlleleGenotypeMappers(numAlleles);
 
 % One or both of these matrices might be useful.
 %
@@ -56,10 +52,40 @@ numAlleles = length(alleleFreqs);
 %INSERT YOUR CODE HERE
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%% test
+% alleleFreqs = [1 2 5 10 20];
+% genotypeVar = 7;
+
+% expect
+% .var  [7]
+% .card [15]
+% .val  [1 4 10 20 40 4 20 40 80 25 100 200 100 400 400 ]
+
+% from above...
+genotypeFactor = struct('var', [], 'card', [], 'val', []);
+numAlleles = length(alleleFreqs);
+
+[allelesToGenotypes, genotypesToAlleles] = generateAlleleGenotypeMappers(numAlleles);
+
+
 % Fill in genotypeFactor.var.  This should be a 1-D row vector.
 % Fill in genotypeFactor.card.  This should be a 1-D row vector.
 
+genotypeFactor.var = [genotypeVar];
+
+numCombinations = nchoosek (numAlleles, 2) + numAlleles;
+genotypeFactor.card = [numCombinations];
+
 genotypeFactor.val = zeros(1, prod(genotypeFactor.card));
 % Replace the zeros in genotypeFactor.val with the correct values.
+
+for g=1:length(genotypeFactor.val)
+  a = genotypesToAlleles(g,:);
+  val = alleleFreqs(a(1)) * alleleFreqs(a(2));
+  if (a(1) != a(2))
+    val = val * 2;
+  end
+  genotypeFactor.val(g) = val;
+end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
