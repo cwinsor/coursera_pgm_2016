@@ -30,7 +30,7 @@ function phenotypeFactor = phenotypeGivenCopiesFactor(alphaList, numAlleles, gen
 %   having each phenotype for each allele combination (note that this is 
 %   the FULL CPD with no evidence observed)
 
-phenotypeFactor = struct('var', [], 'card', [], 'val', []);
+
 
 % Each allele has an ID. Each genotype also has an ID, which is the index 
 % of its alpha in the list of alphas.  There is a mapping from a pair of 
@@ -38,8 +38,6 @@ phenotypeFactor = struct('var', [], 'card', [], 'val', []);
 % below; we compute this mapping using 
 % generateAlleleGenotypeMappers(numAlleles). (A genotype consists of 2 
 % alleles.)
-
-[allelesToGenotypes, genotypesToAlleles] = generateAlleleGenotypeMappers(numAlleles);
 
 % One or both of these matrices might be useful.
 %
@@ -58,10 +56,35 @@ phenotypeFactor = struct('var', [], 'card', [], 'val', []);
 % The number of phenotypes is 2
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
 
+%%% for testing...
+%  alphaList= [0.8; 0.6; 0.1; 0.5; 0.05; 0.01];
+%  numAlleles  = 3;
+%  geneCopyVarOne = 1;
+%  geneCopyVarTwo = 2;
+%  phenotypeVar = 3;
+
+
+% moved from above to here
+phenotypeFactor = struct('var', [], 'card', [], 'val', []);
+[allelesToGenotypes, genotypesToAlleles] = generateAlleleGenotypeMappers(numAlleles);
+
 % Fill in phenotypeFactor.var.  This should be a 1-D row vector.
 % Fill in phenotypeFactor.card.  This should be a 1-D row vector.
+phenotypeFactor.var = [phenotypeVar geneCopyVarOne geneCopyVarTwo];
+phenotypeFactor.card = [2 numAlleles numAlleles];
 
 phenotypeFactor.val = zeros(1, prod(phenotypeFactor.card));
 % Replace the zeros in phentoypeFactor.val with the correct values.
+
+fEntry = 1;
+for (allele1=1: numAlleles)
+  for (allele2=1: numAlleles)
+    geno = allelesToGenotypes(allele1, allele2);
+    
+    phenotypeFactor.val(fEntry) = alphaList(geno);
+    phenotypeFactor.val(fEntry+1) = 1-phenotypeFactor.val(fEntry);
+    fEntry = fEntry + 2;
+  end
+end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

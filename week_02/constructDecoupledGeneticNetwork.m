@@ -60,19 +60,14 @@ function factorList = constructDecoupledGeneticNetwork(pedigree, alleleFreqs, al
 %   factorList: struct array of factors for the genetic network (In each
 %   factor, .var, .card, and .val are row 1-D vectors.)
 
-numPeople = length(pedigree.names);
 
 % Initialize factors
 % We Need 3*numPeople factors because, for each person, there is a factor 
 % for the CPD at each of 2 parental copies of the gene and a factor for the 
 % CPD at the phenotype Note that the order of the factors in the list does 
 % not matter.
-factorList(3*numPeople) = struct('var', [], 'card', [], 'val', []);
 
 % Initialize factors
-factorList(3*numPeople) = struct('var', [], 'card', [], 'val', []);
-
-numAlleles = length(alleleFreqs); % Number of alleles
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % INSERT YOUR CODE HERE
@@ -81,5 +76,109 @@ numAlleles = length(alleleFreqs); % Number of alleles
 % numPeople+1 - 2*numPeople: second parent copy of gene variables
 % 2*numPeople+1 - 3*numPeople: phenotype variables
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
+
+%%% for testing purposes
+%  pedigree = struct('parents', [0,0;1,3;0,0]);
+%  pedigree.names = {'Ira','James','Robin'};
+%  alleleFreqs = [0.1; 0.7; 0.2];
+%%alleleList = {'F', 'f', 'n'};
+%  alphaListThree = [0.8; 0.6; 0.1; 0.5; 0.05; 0.01];
+%  sampleFactorListDecoupled_ME = constructDecoupledGeneticNetwork(pedigree, alleleFreqsThree, alphaListThree);
+
+% moved from above to here
+numPeople = length(pedigree.names);
+factorList(3*numPeople) = struct('var', [], 'card', [], 'val', []);
+numAlleles = length(alleleFreqs); % Number of alleles
+
+
+%%% my code
+
+genosToDo = (1:numPeople*2);
+genosDone = [0];
+
+while (length(genosToDo) > 0)
+  doneThisRound = [];
+  forwardProgress = 0;
+
+  for (genoIndex = 1 : length(genosToDo))
+    genoNum = genosToDo(genoIndex);
+    if (genoNum <= numPeople)
+      genoOneTwo = 1;
+    else
+      genoOneTwo = 2;
+    end
+
+    personNum = mod(genoNum-1,numPeople)+1;
+    
+%    printf("------\n"); 
+%    personNum
+%    genoOneTwo
+    
+    genoVarIndex = (genoOneTwo-1) * numPeople + personNum;
+    genoNum      = (genoOneTwo-1) * numPeople + personNum;
+    
+%    genoVarIndex      
+%    genoNum      
+    
+    if (genoOneTwo == 1)
+      parentGeno1 = pedigree.parents(personNum,1);
+      parentGeno2 = pedigree.parents(personNum,1) + numPeople;
+    else
+      parentGeno1 = pedigree.parents(personNum,2);
+      parentGeno2 = pedigree.parents(personNum,2) + numPeople;
+    end
+    % except if there is no parent both parents need to be set to zero
+    if (parentGeno1 == 0)
+      parentGeno2 = 0;
+    end
+    dependencySet = [parentGeno1 parentGeno2];
+        
+    % if both parents have been processed ...
+    if (length(setdiff(dependencySet,genosDone)) == 0)
+       
+      % bookkeeping - code it here rather than lower down in code
+      doneThisRound = [doneThisRound genoIndex];
+      forwardProgress = 1;
+      
+      %%%%%%%%%%%% genotype factor %%%%%%%%%%%
+      
+      % ancestral nodes (no parents)
+      if (isequaln(dependencySet, [0 0]))
+	 
+	factorList(genoVarIndex) = childCopyGivenFreqsFactor(alleleFreqs, genoNum);
+	
+      % regular nodes (with parents)
+      else
+	  
+	% common numbering
+	  
+	factorList(genoVarIndex) = childCopyGivenParentalsFactor(numAlleles, genoNum, parentGeno1, parentGeno2 );
+	
+      end
+    end
+  end
+  assert(forwardProgress != 0, " not making forward progress");
+  
+  genosDone = [genosDone genosToDo(doneThisRound)];
+  genosToDo(doneThisRound) = [];
+end
+
+
+%%%%%%%%%%%% phenotype factor %%%%%%%%%%%
+for (personNum = 1 : numPeople)
+  varIndex = numPeople*2 + personNum;
+  
+  parent1 = personNum;
+  parent2 = personNum + numPeople;
+  
+  factorList(varIndex) = phenotypeGivenCopiesFactor(alphaList, numAlleles, parent1, parent2, varIndex);
+end
+
+
+
+
+
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
