@@ -23,7 +23,9 @@ numWords = length(allWords);
 wordPredictions = cell(numWords, 1);
 
 for i = 1:numWords
-    wordPredictions{i} = RunInference(BuildOCRNetwork(allWords{i}, imageModel, pairwiseModel, tripletList));
+  foo = BuildOCRNetwork(allWords{i}, imageModel, pairwiseModel, tripletList);
+  wordPredictions{i} = RunInference(foo);
+  %wordPredictions{i} = RunInference(BuildOCRNetwork(allWords{i}, imageModel, pairwiseModel, tripletList));
 end
 
 end

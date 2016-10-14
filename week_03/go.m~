@@ -1,0 +1,8 @@
+
+ factors = BuildOCRNetwork(allWords{1}, imageModel, [], []);
+[charAcc, wordAcc] = ScoreModel(allWords, imageModel, [], [])
+
+
+epwf = ComputeEqualPairwiseFactors(allWords{1}, 26);
+ factors = BuildOCRNetwork(allWords{1}, imageModel, epwf, []);
+[charAcc, wordAcc] = ScoreModel(allWords, imageModel, epwf, [])
