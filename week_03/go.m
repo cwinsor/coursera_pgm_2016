@@ -20,19 +20,7 @@ epwf = ComputeEqualPairwiseFactors(allWords, 26);
 pwf = ComputePairwiseFactors(allWords, pairwiseModel,  26);
 [charAcc, wordAcc] = ScoreModel(allWords, imageModel, pairwiseModel, []);
 
-
-for i=1:100
-  i 
-  foo = BuildOCRNetwork(allWords{i}, imageModel, pairwiseModel, []);
-  foo
-  pairwiseModel
-  bar =  RunInference(foo);
-  assert(false)
-  %wordPredictions{i} = RunInference(BuildOCRNetwork(allWords{i}, imageModel, pairwiseModel, []));
-end
-
-[charAcc, wordAcc] = ScoreModel(allWords, imageModel, pwf, []);
-
-
-» imageModel.ignoreSimilarity = true;
-» factors = BuildOCRNetwork(allWords{i}, imageModel, [], tripletList);
+%%%%%%%%%%%%%%%%%%  4
+%%% EDIT LINE 53/54 OF BuildOCRNetwork.m to call ComputePairwiseFactors
+tripletFactors = ComputeTripletFactors(allWords, tripletList, imageModel.K);
+[charAcc, wordAcc] = ScoreModel(allWords, imageModel, pairwiseModel, tripletList);

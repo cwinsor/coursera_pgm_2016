@@ -27,6 +27,20 @@ end
 
 factors = repmat(struct('var', [], 'card', [], 'val', []), n - 2, 1);
 
-% Your code here:
+theFactorTable = ones(K,K,K);
+for (i=1:length(tripletList))
+  c1=tripletList(i).chars(1);
+  c2=tripletList(i).chars(2);
+  c3=tripletList(i).chars(3);
+  %tripletList(i).factorVal
+  theFactorTable( c1, c2, c3) = tripletList(i).factorVal;
+end
+
+
+for (f=1 : n-2)
+  factors(f).var = [f f+1 f+2];
+  factors(f).card = [K K K];
+  factors(f).val = theFactorTable;
+end
 
 end
