@@ -22,8 +22,25 @@ function wordPredictions = ComputeWordPredictions (allWords, imageModel, pairwis
 numWords = length(allWords);
 wordPredictions = cell(numWords, 1);
 
+%  "in ComputeWordPredictions line 27"
+%  numWords
 for i = 1:numWords
+
+%  i
+%  allWords{i}
+
   foo = BuildOCRNetwork(allWords{i}, imageModel, pairwiseModel, tripletList);
+%  foo
+  %foo(1)
+  %foo(2)
+  %foo(3)
+  %foo(4)
+  %foo(5)
+  %foo(6)
+  %foo(7)
+  %foo(8)
+  %foo(9)
+  %assert(false)
   wordPredictions{i} = RunInference(foo);
   %wordPredictions{i} = RunInference(BuildOCRNetwork(allWords{i}, imageModel, pairwiseModel, tripletList));
 end

@@ -22,6 +22,16 @@ kStderrFilename = 'inf.log';
 kInfBinary = binaries{[ispc ismac isunix]}; % NB: need ismac first so that if ismac and isunix are both 1, then mac is chosen
 kInferenceType = 'map'; % choices are 'map' or 'pd'
 
+%"in RunInference line 26"
+%ff = 9;
+%ff
+%%factors(ff).var
+%%factors(ff).card
+%%size(factors(ff).val)
+%factors(ff)
+%%factors
+%assert(false)
+
 factorsString = SerializeFactorsFg (factors);
 
 fd = fopen(kFactorsFilename, 'wt');

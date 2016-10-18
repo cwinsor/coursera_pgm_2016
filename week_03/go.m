@@ -23,4 +23,10 @@ pwf = ComputePairwiseFactors(allWords, pairwiseModel,  26);
 %%%%%%%%%%%%%%%%%%  4
 %%% EDIT LINE 53/54 OF BuildOCRNetwork.m to call ComputePairwiseFactors
 tripletFactors = ComputeTripletFactors(allWords, tripletList, imageModel.K);
+[charAcc, wordAcc] = ScoreModel(allWords(14), imageModel, pairwiseModel, tripletList);
+[charAcc, wordAcc] = ScoreModel(allWords,     imageModel, pairwiseModel, tripletList);
+
+%%%%%%%%%%%%%%%%%%  5
+imageModel.ignoreSimilarity = false;
+[charAcc, wordAcc] = ScoreModel(allWords(14), imageModel, pairwiseModel, tripletList);
 [charAcc, wordAcc] = ScoreModel(allWords, imageModel, pairwiseModel, tripletList);
