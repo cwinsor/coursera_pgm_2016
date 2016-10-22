@@ -18,6 +18,64 @@ function EUF = CalculateExpectedUtilityFactor( I )
   %
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
 
+%  I.RandomFactors(1)
+%I.RandomFactors(2)
+%  I.DecisionFactors
+%  I.UtilityFactors
+%foo = FactorProduct(I.RandomFactors(1), I.RandomFactors(2))
+%bar = FactorProduct(foo,  I.UtilityFactors)
+%assert(false)
 
-  
+%I.RandomFactors(1)
+%I.UtilityFactors(1)
+%FactorProduct(I.RandomFactors(1), I.UtilityFactors(1))
+
+
+
+%I.RandomFactors
+%I.DecisionFactors
+%I.UtilityFactors
+%assert(false)
+
+% Procedure:
+% Compute a factor that includes everything except the decision rule.
+% This is done using "factor product".
+% Marginalize out everything except the factors that are parents of the decision rule itself.
+% This is the factor  U-d(D, PaD)
+%
+% Step through each of the combinations the parent will present.
+% for each of the combinations, choose the decision rule (value of d)
+% that will result in greatest value.  That is the rule for that combination of inputs.
+
+% Implementation:
+% we will need a list of all factors, and a list of parents of D
+setOfFactorsAll = [];
+for (i=1:length(I.RandomFactors))
+  setOfFactorsAll = union(setOfFactorsAll, I.RandomFactors(i).var);
+end
+for (i=1:length(I.DecisionFactors))
+  setOfFactorsAll = union(setOfFactorsAll, I.DecisionFactors(i).var);
+end
+for (i=1:length(I.UtilityFactors))
+  setOfFactorsAll = union(setOfFactorsAll, I.UtilityFactors(i).var);
+end
+
+
+setOfFactorsDandParentsOfD =  I.DecisionFactors(1).var;
+setOfFactorsNotParentsOfD = setdiff(setOfFactorsAll, setOfFactorsDandParentsOfD);
+
+% Compute a factor that includes everything except the decision rule.
+factorEverythingLessDecisionRule = I.RandomFactors(1);
+for (i=2:length(I.RandomFactors))
+  factorEverythingLessDecisionRule = FactorProduct(factorEverythingLessDecisionRule, I.RandomFactors(i));
+end
+
+factorEverythingLessDecisionRule = FactorProduct(factorEverythingLessDecisionRule, I.UtilityFactors(1));
+
+% Marginalize out everything except the factors that are parents of the decision rule itself.
+factorEverythingLessDrMarginalizedKeepingDrParents = VariableElimination(factorEverythingLessDecisionRule, setOfFactorsNotParentsOfD);
+
+EUF = factorEverythingLessDrMarginalizedKeepingDrParents;
+
+
 end  
