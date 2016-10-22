@@ -10,4 +10,7 @@ I1.UtilityFactors = U;
 
 % Get EUF...
 euf = CalculateExpectedUtilityFactor(I1);
+[meu optdr] = OptimizeMEU(I1)
+%[meu optdr] = OptimizeWithJointUtility(I1)
+%[meu optdr] = OptimizeLinearExpectations(I1)
 
