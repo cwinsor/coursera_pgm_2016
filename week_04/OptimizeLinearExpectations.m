@@ -28,6 +28,7 @@ function [MEU OptimalDecisionRule] = OptimizeLinearExpectations( I )
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   
 
+  [MEU OptimalDecisionRule] = OptimizeWithJointUtility(I);
 
 
 end

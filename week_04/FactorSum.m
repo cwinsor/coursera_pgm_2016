@@ -21,7 +21,6 @@ Uout.card(positions) = U2.card;
 Uout.val = zeros(1,prod(Uout.card));
 
 for (Un=[U1,U2])
-  '--------------------'
   [tf,positions] = ismember(Un.var, Uout.var);
   for (i=1:length(Uout.val))
     %i
