@@ -57,9 +57,8 @@ for (i=1 : length(EUF.val))
   OptimalDecisionRule = SetValueOfAssignment(OptimalDecisionRule, newIndices, v);
 end
 
-OptimalDecisionRule
-assert(false)
 
+MEU = 0;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % case where the decision rule is dependent on one or more factors
 if (length(OptimalDecisionRule.card) > 1)
@@ -70,9 +69,8 @@ if (length(OptimalDecisionRule.card) > 1)
     sets = [sets [1:OptimalDecisionRule.card(f)]];
   end
   combinations = cartesianProduct(sets);
-    
+  
   % iterate through rows
-  maxOverallVal = -1000000;
   for (combNum = 1: length(combinations))
     % iterate through columns
     maxThisRowVal = -1000000;
@@ -83,14 +81,10 @@ if (length(OptimalDecisionRule.card) > 1)
 	maxThisRowVal = val;
 	maxThisRowIndices = indicesRule;
       end
-      if (val > maxOverallVal)
-	maxOverallVal = val;
-      end
       OptimalDecisionRule = SetValueOfAssignment(OptimalDecisionRule, indicesRule, 0); % we zero the array as we go
-      maxThisRowIndices
-      maxThisRowVal
     end
     OptimalDecisionRule = SetValueOfAssignment(OptimalDecisionRule, maxThisRowIndices, 1); % set to 1 the rule which results in greatest result
+    MEU = MEU + maxThisRowVal;
   end
   
   
@@ -98,19 +92,20 @@ if (length(OptimalDecisionRule.card) > 1)
 % case where the decision rule is not dependent on anything
 else
   % iterate through rows
-  maxOverallVal = -1000000;
+  maxThisRowVal = -1000000;
   for (rule=1 : OptimalDecisionRule.card(1));
     indicesRule =  [rule];
     val = GetValueOfAssignment(OptimalDecisionRule, indicesRule);
-    if (val > maxOverallVal)
-      maxOverallVal = val;
+    if (val > maxThisRowVal)
+      maxThisRowVal = val;
       maxThisRowIndices = indicesRule;
     end
     OptimalDecisionRule = SetValueOfAssignment(OptimalDecisionRule, indicesRule, 0); % we zero the array as we go
   end
   OptimalDecisionRule = SetValueOfAssignment(OptimalDecisionRule, maxThisRowIndices, 1); % set to 1 the rule which results in greatest result
+  MEU = MEU + maxThisRowVal;
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-MEU = maxOverallVal;
+
 end
