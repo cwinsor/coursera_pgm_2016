@@ -42,6 +42,7 @@ EUF = CalculateExpectedUtilityFactor( I );
 [tf, s_idx] = ismember(I.DecisionFactors(1).var(1), EUF.var);
 dIndex = s_idx(1);
 
+
 % initialize new factor - OptimalDecisionRule
 % this just reshuffles the EUF so the decision factor is first
 OptimalDecisionRule  = struct('var', [], 'card', [], 'val', []);
@@ -50,37 +51,34 @@ OptimalDecisionRule.card = [ EUF.card(dIndex) EUF.card(1:dIndex-1) EUF.card(dInd
 OptimalDecisionRule.val = zeros(1,prod(OptimalDecisionRule.card));
 % reshape the array
 for (i=1 : length(EUF.val))
-  i
   indices = IndexToAssignment(i, EUF.card);
   v = GetValueOfAssignment(EUF, indices);
   newIndices = [ indices(dIndex) indices(1:dIndex-1) indices(dIndex+1:end) ];
   OptimalDecisionRule = SetValueOfAssignment(OptimalDecisionRule, newIndices, v);
 end
-EUF
+
 OptimalDecisionRule
+assert(false)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % case where the decision rule is dependent on one or more factors
 if (length(OptimalDecisionRule.card) > 1)
-   
+
   % get the cartesian product of the non-decision variables
   sets = {};
   for (f=2:length(OptimalDecisionRule.card))
     sets = [sets [1:OptimalDecisionRule.card(f)]];
   end
-  sets
-  assert(false)
-  combinations = cartesianProduct(sets)
-  
+  combinations = cartesianProduct(sets);
+    
   % iterate through rows
   maxOverallVal = -1000000;
   for (combNum = 1: length(combinations))
-    combNum
     % iterate through columns
     maxThisRowVal = -1000000;
     for (rule=1 : OptimalDecisionRule.card(1));
       indicesRule =  [rule,combinations(combNum)];
-      val = GetValueOfAssignment(OptimalDecisionRule, indicesRule)
+      val = GetValueOfAssignment(OptimalDecisionRule, indicesRule);
       if (val > maxThisRowVal)
 	maxThisRowVal = val;
 	maxThisRowIndices = indicesRule;
@@ -89,6 +87,8 @@ if (length(OptimalDecisionRule.card) > 1)
 	maxOverallVal = val;
       end
       OptimalDecisionRule = SetValueOfAssignment(OptimalDecisionRule, indicesRule, 0); % we zero the array as we go
+      maxThisRowIndices
+      maxThisRowVal
     end
     OptimalDecisionRule = SetValueOfAssignment(OptimalDecisionRule, maxThisRowIndices, 1); % set to 1 the rule which results in greatest result
   end
@@ -97,12 +97,11 @@ if (length(OptimalDecisionRule.card) > 1)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % case where the decision rule is not dependent on anything
 else
-    
   % iterate through rows
   maxOverallVal = -1000000;
   for (rule=1 : OptimalDecisionRule.card(1));
     indicesRule =  [rule];
-    val = GetValueOfAssignment(OptimalDecisionRule, indicesRule)
+    val = GetValueOfAssignment(OptimalDecisionRule, indicesRule);
     if (val > maxOverallVal)
       maxOverallVal = val;
       maxThisRowIndices = indicesRule;
