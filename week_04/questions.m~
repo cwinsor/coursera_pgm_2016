@@ -1,0 +1,8 @@
+
+
+load FullI
+SimpleCalcExpectedUtility(FullI)
+
+FullINew = FullI;
+FullINew.RandomFactors = ObserveEvidence(FullI.RandomFactors, [3,2], 1);
+SimpleCalcExpectedUtility(FullINew)
