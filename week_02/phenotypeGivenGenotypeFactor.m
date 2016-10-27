@@ -45,7 +45,7 @@ phenotypeFactor = struct('var', [], 'card', [], 'val', []);
 % Fill in phenotypeFactor.var.  This should be a 1-D row vector.
 % Fill in phenotypeFactor.card.  This should be a 1-D row vector.
 phenotypeFactor.var = [phenotypeVar genotypeVar];
-phenotypeFactor.card = [2,  ones(1,length(genotypeVar))*3];  % genotype has cardinality of 2, each phenotype has cardinality of 3
+phenotypeFactor.card = [2,  ones(1,length(genotypeVar))*3];  % phenotype has cardinality of 2, each genotype has cardinality of 3
 
 phenotypeFactor.val = zeros(1, prod(phenotypeFactor.card));
 % Replace the zeros in phentoypeFactor.val with the correct values.

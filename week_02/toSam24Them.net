@@ -1,0 +1,80 @@
+net
+{
+	node_size = (90 36);
+}
+
+node IraGenotype
+{
+	label = "IraGenoytpe";
+	position = (1 1);
+	states = ("AA" "Aa" "aa");
+}
+
+node IraPhenotype
+{
+	label = "IraPhenotype";
+	position = (1 2);
+	states = ("POS" "NEG");
+}
+
+node JamesGenotype
+{
+	label = "JamesGenoytpe";
+	position = (2 1);
+	states = ("AA" "Aa" "aa");
+}
+
+node JamesPhenotype
+{
+	label = "JamesPhenotype";
+	position = (2 2);
+	states = ("POS" "NEG");
+}
+
+node RobinGenotype
+{
+	label = "RobinGenoytpe";
+	position = (3 1);
+	states = ("AA" "Aa" "aa");
+}
+
+node RobinPhenotype
+{
+	label = "RobinPhenotype";
+	position = (3 2);
+	states = ("POS" "NEG");
+}
+
+potential (IraGenotype |)
+{
+	data = (0.010000 0.180000 0.810000);
+}
+
+potential (JamesGenotype | IraGenotype RobinGenotype)
+{
+	data = (1.000000 0.000000 0.000000 0.500000 0.500000 0.000000 0.000000 1.000000 0.000000 0.500000 0.500000 0.000000 0.250000 0.500000 0.250000 0.000000 0.500000 0.500000 0.000000 1.000000 0.000000 0.000000 0.500000 0.500000 0.000000 0.000000 1.000000);
+}
+
+potential (RobinGenotype |)
+{
+	data = (0.010000 0.180000 0.810000);
+}
+
+potential (IraPhenotype | IraGenotype)
+{
+	data = ((0.800000 0.200000 0.600000)
+		(0.400000 0.100000 0.900000));
+}
+
+potential (JamesPhenotype | JamesGenotype)
+{
+	data = ((0.800000 0.200000 0.600000)
+		(0.400000 0.100000 0.900000));
+}
+
+potential (RobinPhenotype | RobinGenotype)
+{
+	data = ((0.800000 0.200000 0.600000)
+		(0.400000 0.100000 0.900000));
+}
+
